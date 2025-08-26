@@ -27,22 +27,35 @@ local get_kitty_background = function()
 end
 
 local change_background = function(color, sync)
-	local arg = 'background="' .. color .. '"'
-	local command = "kitty @ set-colors " .. arg
-	if not sync then
-		fn.jobstart(command, {
-			on_stderr = function(_, d, _)
-				if #d > 1 then
-					api.nvim_err_writeln(
-						"Chameleon.nvim: Error changing background. Make sure kitty remote control is turned on."
-					)
-				end
-			end,
-		})
-	else
-		fn.system(command)
-	end
+    local arg = 'background="' .. color .. '"'
+    local command = "kitty @ set-colors " .. arg
+    local opacity_command = "kitty @ set-opacity 1.0"  -- Command to set opacity
+
+    if not sync then
+        fn.jobstart(command, {
+            on_stderr = function(_, d, _)
+                if #d > 1 then
+                    api.nvim_err_writeln(
+                        "Chameleon.nvim: Error changing background. Make sure kitty remote control is turned on."
+                    )
+                end
+            end,
+        })
+        fn.jobstart(opacity_command, {  -- Start the opacity command as a job
+            on_stderr = function(_, d, _)
+                if #d > 1 then
+                    api.nvim_err_writeln(
+                        "Chameleon.nvim: Error changing opacity. Make sure kitty remote control is turned on."
+                    )
+                end
+            end,
+        })
+    else
+        fn.system(command)
+        fn.system(opacity_command)  -- Execute the opacity command
+    end
 end
+
 
 local setup_autocmds = function()
 	local autocmd = api.nvim_create_autocmd
