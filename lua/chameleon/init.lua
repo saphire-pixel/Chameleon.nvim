@@ -15,7 +15,7 @@ local get_kitty_background = function()
 					end
 				end
 			end,
-			on_stderr = function(_, d, _)
+			on_stderr = function(_, d, _) 
 				if #d > 1 then
 					api.nvim_err_writeln(
 						"Chameleon.nvim: Error getting background. Make sure kitty remote control is turned on."
