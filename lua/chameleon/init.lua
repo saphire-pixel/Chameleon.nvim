@@ -26,11 +26,13 @@ local get_kitty_background = function()
 	end
 end
 
-local change_background = function(color, sync)
+local change_background = function(color, sync, restore)
     local arg = 'background="' .. color .. '"'
     local command = "kitty @ set-colors " .. arg
-    local opacity_command = "kitten @ set-background-opacity 1"  -- Command to set opacity
-
+	if restore then
+    	local opacity_command = "kitten @ set-background-opacity 0.5"  -- Command to set opacity
+	else
+		local opacity_command = "kitten @ set-background-opacity 1"  -- Command to set opacity
     if not sync then
         fn.jobstart(command, {
             on_stderr = function(_, d, _)
@@ -84,7 +86,7 @@ local setup_autocmds = function()
 	autocmd({"VimLeavePre", "VimSuspend"}, {
 		callback = function()
 			if M.original_color ~= nil then
-				change_background(M.original_color, true)
+				change_background(M.original_color, true, true)
 				-- Looks like it was silently fixed in NVIM 0.10. At least, I can't reproduce it anymore,
 				-- so for now disable it and see if anyone reports it again.
 				-- https://github.com/neovim/neovim/issues/21856
