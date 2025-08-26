@@ -107,6 +107,8 @@ end
 M.setup = function()
 	get_kitty_background()
 	setup_autocmds()
+	local color = string.format("#%06X", vim.api.nvim_get_hl(0, {name = "Normal"}).bg)
+	change_background(color)
 end
 
 return M
