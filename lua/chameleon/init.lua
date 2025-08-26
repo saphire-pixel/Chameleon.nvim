@@ -30,6 +30,9 @@ local change_background = function(color, sync, restore)
     local arg = 'background="' .. color .. '"'
     local command = "kitty @ set-colors " .. arg
     local opacity_command = "kitten @ set-background-opacity 1"  -- Command to set opacity
+	if restore then
+		local opacity_command = "kitten @ set-background-opacity 0.5"  -- Command to set opacity
+	end
     if not sync then
         fn.jobstart(command, {
             on_stderr = function(_, d, _)
@@ -84,16 +87,6 @@ local setup_autocmds = function()
 		callback = function()
 			if M.original_color ~= nil then
 				change_background(M.original_color, true, true)
-				fn.jobstart(opacity_command, {  -- Start the opacity command as a job
-            	on_stderr = function(_, d, _)
-                	if #d > 1 then
-                    	api.nvim_err_writeln(
-                        	"Chameleon.nvim: Error changing opacity. Make sure kitty remote control is turned on."
-                    	)
-                end
-            end,
-        })
-				fn.system("kitten @ set-background-opacity 0.5")
 				-- Looks like it was silently fixed in NVIM 0.10. At least, I can't reproduce it anymore,
 				-- so for now disable it and see if anyone reports it again.
 				-- https://github.com/neovim/neovim/issues/21856
