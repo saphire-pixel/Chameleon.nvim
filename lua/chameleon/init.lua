@@ -29,7 +29,7 @@ end
 local change_background = function(color, sync)
     local arg = 'background="' .. color .. '"'
     local command = "kitty @ set-colors " .. arg
-    local opacity_command = "kitty @ set-opacity 1.0"  -- Command to set opacity
+    local opacity_command = "kitten @ set-background-opacity 1"  -- Command to set opacity
 
     if not sync then
         fn.jobstart(command, {
